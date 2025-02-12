@@ -60,7 +60,7 @@ def plot_vectors_with_regions(vectors, centroids, query_vector=None, matches=Non
             # Make vectors transparent if their region wasn't searched
             alpha = 1.0 if searched_regions is None or i in searched_regions else 0.1
             ax.scatter(cluster_vectors[:, 0], cluster_vectors[:, 1], cluster_vectors[:, 2], 
-                      c=[colors[i]], alpha=alpha, label=f'Region {i}')
+                      c=[colors[i]], alpha=alpha, label=f'Region {i}') 
     
     # Plot centroids
     ax.scatter(centroids[:, 0], centroids[:, 1], centroids[:, 2], 
