@@ -29,6 +29,7 @@ print(X.shape)
 n_topics = 8
 lda =  LatentDirichletAllocation(n_components=n_topics, random_state=42)
 lda.fit(X)
+
 n_top_words = 10
 feature_names = vectorizer.get_feature_names_out()
 for topic_idx, topic in enumerate(lda.components_):
@@ -46,7 +47,7 @@ for topic_idx, topic in enumerate(lda.components_):
     print(" ".join([feature_names[i] for i in topic.argsort() [:-n_top_words - 1: -1]]))
     df.loc[df.index == topic_idx, 'sub_topic'] = topic_names[topic_idx]
 
-df.to_csv('classified_questions.csv', index=False)
+df.drop(['processed_text', 'text'], axis=1).to_csv('classified_questions.csv', index=False)
 df.head()
 '''
 1. Joins & Views
