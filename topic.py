@@ -6,8 +6,8 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 
-df= pd.read_csv("sql_questions.csv")
-df['text']= df['question']+ '' + df['answer']
+df= pd.read_csv("java_questions.csv")
+df['text']= df['question']
 nltk.download('punkt_tab')
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -26,7 +26,7 @@ df.head()
 vectorizer = TfidfVectorizer(max_features=5000)
 X = vectorizer.fit_transform(df ['processed_text']) 
 print(X.shape)
-n_topics = 8
+n_topics = 4
 lda =  LatentDirichletAllocation(n_components=n_topics, random_state=42)
 lda.fit(X)
 
@@ -47,7 +47,7 @@ for topic_idx, topic in enumerate(lda.components_):
     print(" ".join([feature_names[i] for i in topic.argsort() [:-n_top_words - 1: -1]]))
     df.loc[df.index == topic_idx, 'sub_topic'] = topic_names[topic_idx]
 
-df.drop(['processed_text', 'text'], axis=1).to_csv('classified_questions.csv', index=False)
+df.drop(['processed_text', 'text'], axis=1).to_csv('classified_java_questions.csv', index=False)
 df.head()
 '''
 1. Joins & Views

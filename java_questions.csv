@@ -1,232 +1,178 @@
-ID,Question
-1,What is the difference between JDK and JRE?
-2,What is Java Virtual Machine (JVM)?
-3,What are the different types of memory areas allocated by JVM?
-4,What is JIT compiler?
-5,How Java platform is different from other platforms?
-6,Why people say that Java is 'write once and run anywhere' language?
-7,How does ClassLoader work in Java?
-8,Do you think ‘main’ used for main method is a keyword in Java?
-9,Can we write main method as public void static instead of public static**
-10,"In Java, if we do not specify any value for local variables, then what**"
-11,"Let say, we run a java class without passing any arguments. What will**"
-12,What is the difference between byte and char data types in Java?**
-13,What are the main principles of Object Oriented Programming?
-14,What is the difference between Object Oriented Programming**
-15,In Java what is the default value of an object reference defined as an**
-16,Why do we need constructor in Java?
-17,Why do we need default constructor in Java classes?
-18,What is the value returned by Constructor in Java?
-19,Can we inherit a Constructor?
-20,"Why constructors cannot be final, static, or abstract in Java?**"
-21,What is the purpose of ‘this’ keyword in java?
-22,Explain the concept of Inheritance?
-23,Which class in Java is superclass of every other class?**
-25,"In OOPS, what is meant by composition?"
-26,How aggregation and composition are different concepts?
-27,Why there are no pointers in Java?**
-29,What is the purpose of ‘super’ keyword in java?
-30,Is it possible to use this() and super() both in same constructor?
-31,What is the meaning of object cloning in Java?**
-32,"In Java, why do we use static variable?"
-33,Why it is not a good practice to create static variables in Java?**
-35,Why do we mark main method as static in Java?
-36,In what scenario do we use a static block?
-37,Is it possible to execute a program without defining a main() method?
-38,What happens when static modifier is not mentioned in the signature
-39,What is the difference between static method and instance method in**
-41,How will you implement method overloading in Java?**
-50,Does Java allow virtual functions?
-51,What is meant by covariant return type in Java?**
-52,What is Runtime Polymorphism?
-53,Is it possible to achieve Runtime Polymorphism by data members in**
-55,What is Abstraction in Object Oriented programming?
-56,How is Abstraction different from Encapsulation?
-57,What is an abstract class in Java?**
-59,Is it allowed to mark a method abstract as well as final?
-60,Can we instantiate an abstract class in Java?
-61,What is an interface in Java?
-62,Is it allowed to mark an interface method as static?
-63,Why an Interface cannot be marked as final in Java?**
-65,What can we use instead of Marker interface?
-66,How Annotations are better than Marker Interfaces?
-67,What is the difference between abstract class and interface in Java?**
-69,How can we cast to an object reference to an interface reference?**
-70,How can you change the value of a final variable in Java?
-71,Can a class be marked final in Java?
-72,How can we create a final method in Java?
-73,How can we prohibit inheritance in Java?**
-75,What is a blank final variable in Java?
-76,How can we initialize a blank final variable?
-77,Is it allowed to declare main method as final?**
-78,What is the purpose of package in Java?
-79,What is java.lang package?**
-81,Is it mandatory to import java.lang package every time?**
-83,What is a static import in Java?**
-87,What is the serialization?**
-90,What is Serialization and Deserialization conceptually?
-91,Why do we mark a data member transient?
-92,Is it allowed to mark a method as transient?
-93,How does marking a field as transient makes it possible to serialize an**
-95,What is the difference between Serializable and Externalizable**
-96,What is Reflection in Java?
-97,What are the uses of Reflection in Java?**
-99,How can we create an Object dynamically at Runtime in Java?**
-444,How can you guarantee that the garbage collection takes place?**
-448,You have a character array and a String. Which one is more secure**
-484,What is HTTP Tunneling?**
-844,What is the purpose of git config command?**
-1000,Can we create Microservices as State Machines?**
-1,What is the difference between
-2,What is Java Virtual Machine
-3,What are the different types of
-1,ClassLoader: It is a component of JVM used to load class
-2,Class (Method) Area: It stores per-class structures such as
-3,Heap: Heap is created a runtime and it contains the runtime
-4,Stack: Stack stores local variables and partial results at
-5,Program Counter Register: This memory area contains the
-6,Native Method Stack: This area is reserved for all the
-4,What is JIT compiler?
-5,How Java platform is different
-6,Why people say that Java is 'write
-7,How does ClassLoader work in
-1,Bootstrap ClassLoader: This is the first ClassLoader. It
-2,Extension ClassLoader: It loads class files from jre/lib/ext
-3,Application ClassLoader: This ClassLoader depends on
-8,Do you think ‘main’ used for main
-9,Can we write main method as
-10,"In Java, if we do not specify any"
-11,"Let say, we run a java class without"
-12,What is the difference between
-127,
-13,What are the main principles of
-1,Abstraction
-2,Encapsulation
-3,Inheritance
-4,Polymorphism
-14,What is the difference between
-15,In Java what is the default value of
-16,Why do we need constructor in
-17,Why do we need default
-18,What is the value returned by
-19,Can we inherit a Constructor?
-20,"Why constructors cannot be final,"
-21,What is the purpose of ‘this’
-22,Explain the concept of
-23,Which class in Java is superclass
-24,Why Java does not support
-25,"In OOPS, what is meant by"
-26,How aggregation and composition
-27,Why there are no pointers in
-28,"If there are no pointers in Java,"
-29,What is the purpose of ‘super’
-30,Is it possible to use this() and
-31,What is the meaning of object
-32,"In Java, why do we use static"
-33,Why it is not a good practice to
-34,What is the purpose of static
-35,Why do we mark main method as
-36,In what scenario do we use a static
-37,Is it possible to execute a program
-38,What happens when static
-39,What is the difference between
-40,What is the other name of Method
-41,How will you implement method
-1,Different number of parameters
-2,Different data type of parameters
-3,Different sequence of data type of parameters
-42,What kinds of argument
-1,Number of parameters
-2,Data type of parameters
-3,Sequence of data type of parameters
-43,Why it is not possible to do
-44,Is it allowed to overload main()
-45,How do we implement method
-46,Are we allowed to override a static
-47,Why Java does not allow
-48,Is it allowed to override an
-49,What is the difference between
-1,Method overloading is static polymorphism. Method
-2,Method overloading occurs within the same class. Method
-3,Parameters must be different in method overloading.
-4,Method overloading is a compile time concept. Method
-50,Does Java allow virtual functions?
-51,What is meant by covariant return
-52,What is Runtime Polymorphism?
-53,Is it possible to achieve Runtime
-54,Explain the difference between
-55,What is Abstraction in Object
-56,How is Abstraction different from
-57,What is an abstract class in Java?
-58,Is it allowed to mark a method
-59,Is it allowed to mark a method
-60,Can we instantiate an abstract
-61,What is an interface in Java?
-62,Is it allowed to mark an interface
-63,Why an Interface cannot be
-64,What is a marker interface?
-65,What can we use instead of
-66,How Annotations are better than
-67,What is the difference between 1. An abstract class can have implemented methods with 2. An abstract class can have instance member variables. An 3. An abstract class can have a constructor. Interface cannot 4.A class can extend only one abstract class. A class can
-68,Does Java allow us to use private
-69,How can we cast to an object
-70,How can you change the value of a
-71,Can a class be marked final in
-72,How can we create a final method
-73,How can we prohibit inheritance
-74,Why Integer class in final in Java?
-75,What is a blank final variable in
-76,How can we initialize a blank final
-77,Is it allowed to declare main
-78,What is the purpose of package in
-79,What is java.lang package?
-80,Which is the most important class
-81,Is it mandatory to import java.lang
-82,Can you import same package or
-83,What is a static import in Java?
-84,What is the difference between
-85,What is Locale in Java?
-86,How will you use a specific Locale
-87,What is the serialization?
-88,What is the purpose of Communication: It is used for transmitting an object over Persistence: We can store the object’s state in a database Caching: Serialization can be used for caching to improve and Cross JVM Synchronization: It can be used in same way
-89,What is Deserialization?
-90,What is Serialization and
-91,Why do we mark a data member
-92,Is it allowed to mark a method as
-93,How does marking a field as
-94,What is Externalizable interface
-95,What is the difference between
-96,What is Reflection in Java?
-97,What are the uses of Reflection in
-98,How can we access private
-99,How can we create an Object
-100,What is Garbage Collection in
-101,Why Java provides Garbage
-102,What is the purpose of gc() in
-103,How does Garbage Collection
-104,When does an object become 1. An Object/instance that cannot be reached by a live thread. 2. A set of circularly referenced instances that cannot be
-105,Why do we use finalize() method
-106,What are the different types of Strong Reference Soft Reference Weak Reference Phantom Reference
-107,How can we reference an
-108,What kind of process is the
-109,What is the purpose of the 1.Runtime.freeMemory() – This method returns the value of 2.Runtime.maxMemory() - This method returns the value of 3.Runtime.gc() – This method can invoke garbage collection.
-110,How can we invoke an external
-111,What are the uses of Runtime 1.It allows to read data via key board 2.It can use system properties and environment variables 3.It helps in running non-java programs from within a java
-112,What is a Nested class?
-113,How many types of Nested classes 1.Member inner class 2.Local inner class 3.Anonymous inner class 4.Static nested class
-114,Why do we use Nested Classes?
-115,What is the difference between a
-116,What is a Nested interface?
-117,How can we access the non-final
-118,Can an Interface be defined in a
-119,Do we have to explicitly mark a
-120,Why do we use Static Nested
-121,What is the meaning of
-122,Why a String object is considered
-123,How many objects does following
-124,How many ways are there in
-125,How many objects does
-126,What is String interning?
-127,Why Java uses String literal
-128,What is the basic difference
-129,How will you create an immutable
+Question
+What is the difference between JDK and JRE?
+What is Java Virtual Machine (JVM)?
+What are the different types of memory areas allocated by JVM?
+What is JIT compiler?
+How Java platform is different from other platforms?
+Why people say that Java is 'write once and run anywhere' language?
+How does ClassLoader work in Java?
+Do you think ‘main’ used for main method is a keyword in Java?
+Can we write main method as public void static instead of public static void?
+"In Java, if we do not specify any value for local variables, then what will happen when we try to use them?"
+"Let say, we run a java class without passing any arguments. What will be the value of the args array in the main method?"
+What is the difference between byte and char data types in Java?
+What are the main principles of Object Oriented Programming?
+What is the difference between Object Oriented Programming and Procedural Programming?
+"In Java, what is the default value of an object reference defined as an instance variable of a class?"
+Why do we need constructor in Java?
+Why do we need default constructor in Java classes?
+What is the value returned by Constructor in Java?
+Can we inherit a Constructor?
+"Why constructors cannot be final, static, or abstract in Java?"
+What is the purpose of ‘this’ keyword in java?
+Explain the concept of Inheritance?
+Which class in Java is superclass of every other class?
+"In OOPS, what is meant by composition?"
+How aggregation and composition are different concepts?
+Why there are no pointers in Java?
+What is the purpose of ‘super’ keyword in java?
+Is it possible to use this() and super() both in same constructor?
+What is the meaning of object cloning in Java?
+"In Java, why do we use static variable?"
+Why it is not a good practice to create static variables in Java?
+Why do we mark main method as static in Java?
+In what scenario do we use a static block?
+Is it possible to execute a program without defining a main() method?
+What happens when the `static` modifier is not mentioned in the signature of the `main` method in a Java program?
+What is the difference between a static method and an instance method in Java?
+How will you implement method overloading in Java?
+Does Java allow virtual functions?
+What is meant by covariant return type in Java?
+What is Runtime Polymorphism?
+Is it possible to achieve Runtime Polymorphism by data members in Java?
+What is Abstraction in Object Oriented programming?
+How is Abstraction different from Encapsulation?
+What is an abstract class in Java?
+Is it allowed to mark a method abstract as well as final?
+Can we instantiate an abstract class in Java?
+What is an interface in Java?
+Is it allowed to mark an interface method as static?
+Why an Interface cannot be marked as final in Java?
+What can we use instead of Marker interface?
+How Annotations are better than Marker Interfaces?
+What is the difference between abstract class and interface in Java?
+How can we cast to an object reference to an interface reference?
+How can you change the value of a final variable in Java?
+Can a class be marked final in Java?
+How can we create a final method in Java?
+How can we prohibit inheritance in Java?
+What is a blank final variable in Java?
+How can we initialize a blank final variable?
+Is it allowed to declare main method as final?
+What is the purpose of package in Java?
+Is it mandatory to import java.lang package every time?
+What is a static import in Java?
+What is the serialization?
+What is Serialization and Deserialization conceptually?
+Why do we mark a data member transient?
+Is it allowed to mark a method as transient?
+How does marking a field as transient makes it possible to serialize an object in Java?
+What is the difference between Serializable and Externalizable**
+What is Reflection in Java?
+What are the uses of Reflection in Java?
+How can we create an Object dynamically at Runtime in Java?
+How can you guarantee that the garbage collection takes place?
+You have a character array and a String. Which one is more secure?
+What is HTTP Tunneling?
+What is the purpose of git config command?
+Can we create Microservices as State Machines?
+What is the difference between == and .equals() in Java?
+What is Java Virtual Machine?
+What are the different types of ClassLoaders in Java?
+What is JIT compiler?
+How Java platform is different from other platforms?
+Why people say that Java is 'write once and run anywhere' language?
+How does ClassLoader work in Java?
+Do you think ‘main’ used for main method is a keyword in Java?
+Can we write main method as public void static instead of public static void?
+"In Java, if we do not specify any value for local variables, then what will happen when we try to use them?"
+"Let say, we run a java class without passing any arguments. What will be the value of the args array in the main method?"
+What is the difference between byte and char data types in Java?
+What are the main principles of Object Oriented Programming?
+What is the difference between Object Oriented Programming and Procedural Programming?
+"In Java, what is the default value of an object reference defined as an instance variable of a class?"
+Why do we need constructor in Java?
+""
+What are the main principles of
+Abstraction
+Encapsulation
+Inheritance
+Polymorphism"""
+In Java what is the default value of an object reference defined as an instance variable of a class?
+Can we inherit a Constructor?
+"Why constructors cannot be final,"
+What is the purpose of ‘this’ keyword in java?
+Explain the concept of Inheritance?
+Which class in Java is superclass of every other class?
+Why Java does not support multiple inheritance?
+How aggregation and composition are different concepts?
+Why there are no pointers in Java?
+"If there are no pointers in Java,"
+What is the purpose of ‘super’ keyword in java?
+Is it possible to use this() and super() both in same constructor?
+What is the meaning of object cloning in Java?
+"In Java, why do we use static"
+Why it is not a good practice to create static variables in Java?
+What is the purpose of static keyword in Java?
+Why do we mark main method as static in Java?
+In what scenario do we use a static block?
+Is it possible to execute a program without defining a main() method?
+What happens when the `static` modifier is not mentioned in the signature of the `main` method in a Java program?
+What is the difference between a static method and an instance method in Java?
+How will you implement method overloading in Java?
+Does Java allow virtual functions?
+What is meant by covariant return type in Java?
+What is Runtime Polymorphism?
+Is it possible to achieve Runtime Polymorphism by data members in Java?
+What kinds of argument can we pass to a method in Java?
+Why it is not possible to do method overloading by changing the return type of the method?
+Is it allowed to overload main() method?
+How do we implement method overloading in Java?
+Are we allowed to override a static method?
+Why Java does not allow method overloading by changing the return type of the method?
+Is it allowed to override an instance method by changing the return type of the method?
+What is the difference between method overloading and method overriding in Java?
+Does Java allow virtual functions?
+What is meant by covariant return type in Java?
+What is Runtime Polymorphism?
+Is it possible to achieve Runtime Polymorphism by data members in Java?
+Explain the difference between method overloading and method overriding in Java?
+What is Abstraction in Object Oriented programming?
+How is Abstraction different from Encapsulation?
+What is an abstract class in Java?
+Is it allowed to mark a method as abstract?
+Is it allowed to mark a method as static?
+Can we instantiate an abstract class in Java?
+What is an interface in Java?
+Is it allowed to mark an interface method as static?
+Why an Interface cannot be marked as final in Java?
+What is a marker interface?
+How can we cast to an object reference to an interface reference?
+How can you change the value of a final variable in Java?
+Can a class be marked final in Java?
+How can we create a final method in Java?
+How can we prohibit inheritance in Java?
+Why Integer class in final in Java?
+What is a blank final variable in Java?
+How can we initialize a blank final variable?
+Is it allowed to declare main method as final?
+What is the purpose of package in Java?
+Can you import same package or class multiple times?
+What is a static import in Java?
+What is the difference between
+What is Locale in Java?
+How will you use a specific Locale in Java?
+What is the serialization?
+What is Serialization and Deserialization conceptually?
+Why do we mark a data member transient?
+What is Externalizable interface
+What is the difference between Serializable and Externalizable?
+What is Reflection in Java?
+What is Garbage Collection in Java?
+Why do we use finalize() method?
+What are the different types of Strong Reference Soft Reference Weak Reference Phantom Reference?
+How can we reference an object?
+What is a Nested class?
+How many types of Nested classes 1.Member inner class 2.Local inner class 3.Anonymous inner class 4.Static nested class
+Why do we use Nested Classes?
+What is the difference between a Nested interface and a regular interface?
