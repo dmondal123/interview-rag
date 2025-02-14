@@ -1,4 +1,5 @@
 import faiss
+
 import numpy as np
 import time
 from langchain_openai import ChatOpenAI
@@ -117,10 +118,12 @@ def create_sql_quiz():
                 # Select question based on current difficulty
                 available_questions = question_pool[current_topic][current_difficulty]
                 if not available_questions:
-                    print(f"No questions available for {current_difficulty} difficulty, falling back to medium")
+                    print(f"No more questions available for {current_difficulty} difficulty, falling back to medium")
                     available_questions = question_pool[current_topic]['medium']
                     if not available_questions:
-                        raise Exception(f"No questions available for topic {current_topic}")
+                        print(f"No more questions available for topic {current_topic}")
+                        # Skip this iteration and reduce total questions
+                        continue
                 
                 question = random.choice(available_questions)
                 available_questions.remove(question)  # Prevent repetition
@@ -145,10 +148,10 @@ def create_sql_quiz():
                 
                 # Generate question variation based on previous performance
                 print("Generating question variation...")
-                llm_response = question_chain.run(
-                    question=orig_question,
-                    difficulty=difficulty,
-                    previous_performance=previous_performance
+                llm_response = question_chain.invoke(
+                    input={"question": orig_question,
+                          "difficulty": difficulty,
+                          "previous_performance": previous_performance}
                 )
                 
                 print(f"\nQuestion {i+1} (Difficulty: {current_difficulty}, Topic: {sub_topic})")
@@ -163,7 +166,7 @@ def create_sql_quiz():
                 )
                 comparison_chain = LLMChain(llm=llm, prompt=comparison_prompt)
                 
-                result = comparison_chain.run(user_answer=user_answer, correct_answer=answer)
+                result = comparison_chain.invoke(input={"user_answer": user_answer, "correct_answer": answer}).content
                 
                 if "correct" in result.lower():
                     print("Correct!")
@@ -195,7 +198,9 @@ def create_sql_quiz():
                 except Exception as e:
                     print(f"Error closing database connections: {str(e)}")
 
-        print(f"\nQuiz completed! Your score: {score}/5")
+        # Adjust final score message based on actual questions asked
+        total_questions = i + 1  # i is 0-based, so add 1
+        print(f"\nQuiz completed! Your score: {score}/{total_questions}")
 
     except Exception as e:
         print(f"Fatal error in create_sql_quiz: {str(e)}")
