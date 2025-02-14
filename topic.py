@@ -14,7 +14,9 @@ nltk.download('wordnet')
 nltk.download('stopwords')
 lemmatizer =WordNetLemmatizer()
 def preprocess_text(text):
-    text = text.lower()
+    if pd.isna(text):
+        return ""
+    text = str(text).lower()
     text = re.sub(r'\d+', '', text)
     text = re.sub(r' [^\w\s]', '', text)
     words = word_tokenize(text)
@@ -33,22 +35,10 @@ lda.fit(X)
 n_top_words = 10
 feature_names = vectorizer.get_feature_names_out()
 for topic_idx, topic in enumerate(lda.components_):
-    topic_names = [
-        "Joins & Views",
-        "Keys & Constraints", 
-        "Indexes & Transactions",
-        "Basic SQL Operations",
-        "Views & Derived Tables",
-        "Users & Security",
-        "Databases & Storage",
-        "Data Types & Tablespaces"
-    ]
-    print(f"Topic {topic_idx + 1} - {topic_names[topic_idx]}:")
+    print(f"Topic {topic_idx + 1} :")
     print(" ".join([feature_names[i] for i in topic.argsort() [:-n_top_words - 1: -1]]))
-    df.loc[df.index == topic_idx, 'sub_topic'] = topic_names[topic_idx]
 
-df.drop(['processed_text', 'text'], axis=1).to_csv('classified_java_questions.csv', index=False)
-df.head()
+
 '''
 1. Joins & Views
 2. Keys & Constraints
