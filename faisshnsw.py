@@ -16,7 +16,30 @@ def parse_embedding(embedding):
 def get_db_connection():
     pass
 
-def search_faiss_hnsw_with_difficulty(topic, difficulty, k=2):
+# Define topic to domain mapping
+TOPIC_DOMAINS = {
+    # SQL topics
+    "Keys & Constraints": "sql",
+    "Basic SQL Operations": "sql",
+    "Indexes & Transactions": "sql",
+    "Views & Derived Tables": "sql",
+    "Joins & Views": "sql",
+    "Users & Security": "sql",
+    "Databases & Storage": "sql",
+    "Data Types & Tablespaces": "sql",
+    # Java topics
+    "Arrays": "java",
+    "Database": "java",
+    "Classes and Keywords": "java",
+    "Objects and Serialization": "java",
+    "Inheritance and Interfaces": "java",
+    "Dynamic Programming": "java",
+    "DFS and BFS": "java",
+    "Methods and Polymorphism": "java" 
+}
+
+def search_faiss_hnsw_with_difficulty(topic, difficulty, k=2, domain="sql"):
+    """Modified to handle both SQL and Java questions"""
     query = f"{topic} {difficulty}"
     query_embedding = get_embeddings(query)
     if query_embedding is None:
@@ -27,10 +50,13 @@ def search_faiss_hnsw_with_difficulty(topic, difficulty, k=2):
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    # Select table based on domain
+    table_name = "java_embeddings" if domain == "java" else "sql_embeddings"
+    
     # Get embeddings for questions matching the difficulty
-    cursor.execute("""
+    cursor.execute(f"""
         SELECT id, question_embedding 
-        FROM embeddings 
+        FROM {table_name}
         WHERE difficulty = %s
     """, (difficulty,))
     
@@ -48,7 +74,7 @@ def search_faiss_hnsw_with_difficulty(topic, difficulty, k=2):
     
     results = []
     for idx in I[0]:
-        cursor.execute("SELECT question FROM embeddings WHERE id=%s", (ids[idx],))
+        cursor.execute(f"SELECT question FROM {table_name} WHERE id=%s", (ids[idx],))
         result = cursor.fetchone()
         if result:
             results.append(result[0])
@@ -59,7 +85,7 @@ def search_faiss_hnsw_with_difficulty(topic, difficulty, k=2):
 
 def create_sql_quiz():
     try:
-        print("Initializing SQL Quiz...")
+        print("Initializing Quiz...")
         
         llm = ChatOpenAI(
             model="gpt-3.5-turbo",
@@ -67,9 +93,9 @@ def create_sql_quiz():
         )
         print("LLM initialized successfully")
 
-        # Modified prompt templates
+        # Modified prompt templates to handle both SQL and Java
         question_prompt = ChatPromptTemplate.from_template("""
-            Based on the following SQL question and its difficulty level, generate a concise version 
+            Based on the following {domain} question and its difficulty level, generate a concise version 
             of the question that tests the same concept: 
             Question: {question}
             Difficulty: {difficulty}
@@ -79,23 +105,24 @@ def create_sql_quiz():
             - More challenging if the previous answer was correct
             - Slightly easier if the previous answer was incorrect
             - Related to the same topic as the previous question
+            - Appropriate for {domain} programming
         """)
 
         question_chain = LLMChain(llm=llm, prompt=question_prompt)
         print("Question chain created successfully")
 
-        # Get initial pool of questions using FAISS search
-        topics = ["Joins & Views", "Keys & Constraints", "Basic SQL Operations", 
-                 "Indexes & Transactions", "Views & Derived Tables"]
+        # Modified topics list to include both SQL and Java topics
+        topics = ["Keys & Constraints", "Arrays", "Database"]
         
         print("Building question pool...")
         question_pool = {}
         for topic in topics:
             print(f"Fetching questions for topic: {topic}")
+            domain = TOPIC_DOMAINS.get(topic, "sql")  # Default to SQL if topic not found
             topic_questions = {
-                'easy': search_faiss_hnsw_with_difficulty(topic, 'easy', k=2),
-                'medium': search_faiss_hnsw_with_difficulty(topic, 'medium', k=2),
-                'hard': search_faiss_hnsw_with_difficulty(topic, 'hard', k=2)
+                'easy': search_faiss_hnsw_with_difficulty(topic, 'easy', k=2, domain=domain),
+                'medium': search_faiss_hnsw_with_difficulty(topic, 'medium', k=2, domain=domain),
+                'hard': search_faiss_hnsw_with_difficulty(topic, 'hard', k=2, domain=domain)
             }
             if not any(topic_questions.values()):
                 print(f"Warning: No questions found for topic: {topic}")
@@ -104,13 +131,13 @@ def create_sql_quiz():
         if not any(any(questions.values()) for questions in question_pool.values()):
             raise Exception("No questions available in the pool")
 
-        # Start with random topic and medium difficulty
+        # Rest of the quiz logic remains similar, but we need to modify the database queries
         current_topic = random.choice(topics)
         current_difficulty = 'medium'
         previous_performance = 'initial'
         score = 0
         
-        print("\nWelcome to the SQL Quiz!\n")
+        print("\nWelcome to the Programming Quiz!\n")
         
         for i in range(5):
             try:
@@ -122,23 +149,25 @@ def create_sql_quiz():
                     available_questions = question_pool[current_topic]['medium']
                     if not available_questions:
                         print(f"No more questions available for topic {current_topic}")
-                        # Skip this iteration and reduce total questions
                         continue
                 
                 question = random.choice(available_questions)
                 available_questions.remove(question)  # Prevent repetition
                 
-                # Get question details from database
+                # Get question details from appropriate database table
                 conn = get_db_connection()
                 if conn is None:
                     raise Exception("Could not establish database connection")
                     
                 cursor = conn.cursor()
-                cursor.execute("""
-                        SELECT question, answer, difficulty, sub_topic 
-                        FROM embeddings 
-                        WHERE question = %s
-                    """, (question,))
+                domain = TOPIC_DOMAINS.get(current_topic, "sql")
+                table_name = "java_embeddings" if domain == "java" else "sql_embeddings"
+                
+                cursor.execute(f"""
+                    SELECT question, answer, difficulty, sub_topic 
+                    FROM {table_name}
+                    WHERE question = %s
+                """, (question,))
                     
                 question_data = cursor.fetchone()
                 if not question_data:
@@ -149,12 +178,15 @@ def create_sql_quiz():
                 # Generate question variation based on previous performance
                 print("Generating question variation...")
                 llm_response = question_chain.invoke(
-                    input={"question": orig_question,
-                          "difficulty": difficulty,
-                          "previous_performance": previous_performance}
+                    input={
+                        "question": orig_question,
+                        "difficulty": difficulty,
+                        "previous_performance": previous_performance,
+                        "domain": domain
+                    }
                 )
                 
-                print(f"\nQuestion {i+1} (Difficulty: {current_difficulty}, Topic: {sub_topic})")
+                print(f"\nQuestion {i+1} (Difficulty: {current_difficulty}, Topic: {sub_topic}, Domain: {domain.upper()})")
                 print(llm_response)
                 
                 user_answer = input("\nYour answer: ")
@@ -162,25 +194,30 @@ def create_sql_quiz():
                 # Compare with correct answer using LLM
                 print("Evaluating answer...")
                 comparison_prompt = ChatPromptTemplate.from_template(
-                    "Compare the following SQL answers and determine if they are functionally equivalent:\nUser's answer: {user_answer}\nCorrect answer: {correct_answer}\nRespond with only 'correct' or 'incorrect'."
+                    "Compare the following {domain} answers and determine if they are functionally equivalent:\nUser's answer: {user_answer}\nCorrect answer: {correct_answer}\nRespond with only 'correct' or 'incorrect'."
                 )
                 comparison_chain = LLMChain(llm=llm, prompt=comparison_prompt)
                 
-                result = comparison_chain.invoke(input={"user_answer": user_answer, "correct_answer": answer}).content
+                result = comparison_chain.invoke(
+                    input={
+                        "user_answer": user_answer,
+                        "correct_answer": answer,
+                        "domain": domain
+                    }
+                )
                 
-                if "correct" in result.lower():
+                if "correct" in str(result).lower():
                     print("Correct!")
                     score += 1
                     previous_performance = 'correct'
                     if current_difficulty == 'easy':
-                                current_difficulty = 'medium'
+                        current_difficulty = 'medium'
                     elif current_difficulty == 'medium':
                         current_difficulty = 'hard'
                 else:
                     print("Incorrect.")
                     print(f"The correct answer is:\n{answer}")
                     previous_performance = 'incorrect'
-                    # Decrease difficulty for next question
                     if current_difficulty == 'hard':
                         current_difficulty = 'medium'
                     elif current_difficulty == 'medium':
