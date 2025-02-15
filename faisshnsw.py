@@ -38,7 +38,7 @@ TOPIC_DOMAINS = {
     "Methods and Polymorphism": "java" 
 }
 
-def search_faiss_hnsw_with_difficulty(topic, difficulty, k=2, domain="sql"):
+def search_faiss_hnsw_with_difficulty(topic, difficulty, domain, k=2):
     """Modified to handle both SQL and Java questions"""
     query = f"{topic} {difficulty}"
     query_embedding = get_embeddings(query)
@@ -82,6 +82,106 @@ def search_faiss_hnsw_with_difficulty(topic, difficulty, k=2, domain="sql"):
     cursor.close()
     conn.close()
     return results
+
+def provide_quiz_feedback(user_answers, quiz_questions):
+    """
+    Use OpenAI to generate a recruiter-friendly performance report
+    
+    Args:
+        user_answers: List of (question, user_answer, correct_answer, topic, difficulty, domain) tuples
+        quiz_questions: List of questions asked during the quiz
+    """
+    try:
+        llm = ChatOpenAI(
+            model="gpt-3.5-turbo",
+            temperature=0.7
+        )
+        
+        # Prepare performance metrics
+        performance_data = []
+        for q_data in user_answers:
+            _, user_ans, correct_ans, topic, diff, domain = q_data
+            performance_data.append({
+                'topic': topic,
+                'difficulty': diff,
+                'domain': domain,
+                'is_correct': user_ans.lower() == correct_ans.lower()
+            })
+        
+        # Calculate summary statistics
+        total_questions = len(performance_data)
+        correct_answers = sum(1 for p in performance_data if p['is_correct'])
+        performance_by_domain = {}
+        performance_by_difficulty = {'easy': [], 'medium': [], 'hard': []}
+        
+        for p in performance_data:
+            domain = p['domain']
+            if domain not in performance_by_domain:
+                performance_by_domain[domain] = {'correct': 0, 'total': 0}
+            performance_by_domain[domain]['total'] += 1
+            if p['is_correct']:
+                performance_by_domain[domain]['correct'] += 1
+            performance_by_difficulty[p['difficulty']].append(p['is_correct'])
+        
+        feedback_prompt = ChatPromptTemplate.from_template("""
+            You are a technical recruiter reviewing a candidate's programming quiz performance. 
+            Generate a professional feedback report based on the following data:
+
+            Overall Score: {correct_answers}/{total_questions}
+
+            Domain Performance:
+            {domain_performance}
+
+            Difficulty Level Performance:
+            {difficulty_performance}
+
+            Please provide a concise professional report that includes:
+            1. Overall assessment of technical skills
+            2. Strengths and areas for improvement
+            3. Recommendations for skill development
+            
+            Focus on evaluating:
+            - Problem-solving capabilities
+            - Technical proficiency in different domains
+            - Ability to handle increasing difficulty
+            
+            Keep the tone professional and constructive. Do not mention specific questions or answers.
+        """)
+        
+        # Format performance data
+        domain_perf_str = "\n".join([
+            f"{domain.upper()}: {stats['correct']}/{stats['total']} correct"
+            for domain, stats in performance_by_domain.items()
+        ])
+        
+        difficulty_perf_str = "\n".join([
+            f"{diff.capitalize()}: {sum(results)}/{len(results)} correct"
+            for diff, results in performance_by_difficulty.items()
+            if results  # Only include difficulties that were attempted
+        ])
+        
+        # Get AI feedback
+        feedback_chain = LLMChain(llm=llm, prompt=feedback_prompt)
+        feedback = feedback_chain.invoke(
+            input={
+                "correct_answers": correct_answers,
+                "total_questions": total_questions,
+                "domain_performance": domain_perf_str,
+                "difficulty_performance": difficulty_perf_str
+            }
+        )
+        
+        # Print the recruiter-focused feedback
+        print("\n=== Candidate Performance Report ===")
+        print(feedback['text'])
+        
+    except Exception as e:
+        print(f"Error generating performance report: {str(e)}")
+        # Fallback to basic statistics
+        print(f"\nBasic Performance Summary:")
+        print(f"Total Score: {correct_answers}/{total_questions}")
+        for domain, stats in performance_by_domain.items():
+            print(f"{domain.upper()}: {stats['correct']}/{stats['total']} correct")
 
 def create_sql_quiz():
     try:
@@ -138,6 +238,8 @@ def create_sql_quiz():
         score = 0
         
         print("\nWelcome to the Programming Quiz!\n")
+        
+        user_answers = []  # List to store user answers and question details
         
         for i in range(5):
             try:
@@ -223,6 +325,16 @@ def create_sql_quiz():
                     elif current_difficulty == 'medium':
                         current_difficulty = 'easy'
 
+                # After getting user's answer and evaluating it, store the details
+                user_answers.append((
+                    orig_question,
+                    user_answer,
+                    answer,
+                    sub_topic,
+                    difficulty,
+                    domain
+                ))
+
             except Exception as e:
                 print(f"Error during question {i+1}: {str(e)}")
                 continue
@@ -238,6 +350,9 @@ def create_sql_quiz():
         # Adjust final score message based on actual questions asked
         total_questions = i + 1  # i is 0-based, so add 1
         print(f"\nQuiz completed! Your score: {score}/{total_questions}")
+
+        # After quiz completion, provide detailed feedback
+        provide_quiz_feedback(user_answers, question_pool)
 
     except Exception as e:
         print(f"Fatal error in create_sql_quiz: {str(e)}")
