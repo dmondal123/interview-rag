@@ -83,13 +83,15 @@ def search_faiss_hnsw_with_difficulty(topic, difficulty, domain, k=2):
     conn.close()
     return results
 
-def provide_quiz_feedback(user_answers, quiz_questions):
+def provide_quiz_feedback(user_answers, quiz_questions, final_score, total_questions):
     """
     Use OpenAI to generate a recruiter-friendly performance report
     
     Args:
         user_answers: List of (question, user_answer, correct_answer, topic, difficulty, domain) tuples
         quiz_questions: List of questions asked during the quiz
+        final_score: The final score achieved by the candidate
+        total_questions: Total number of questions attempted
     """
     try:
         llm = ChatOpenAI(
@@ -108,9 +110,7 @@ def provide_quiz_feedback(user_answers, quiz_questions):
                 'is_correct': user_ans.lower() == correct_ans.lower()
             })
         
-        # Calculate summary statistics
-        total_questions = len(performance_data)
-        correct_answers = sum(1 for p in performance_data if p['is_correct'])
+        # Calculate domain-wise performance
         performance_by_domain = {}
         performance_by_difficulty = {'easy': [], 'medium': [], 'hard': []}
         
@@ -164,7 +164,7 @@ def provide_quiz_feedback(user_answers, quiz_questions):
         feedback_chain = LLMChain(llm=llm, prompt=feedback_prompt)
         feedback = feedback_chain.invoke(
             input={
-                "correct_answers": correct_answers,
+                "correct_answers": final_score,
                 "total_questions": total_questions,
                 "domain_performance": domain_perf_str,
                 "difficulty_performance": difficulty_perf_str
@@ -179,7 +179,7 @@ def provide_quiz_feedback(user_answers, quiz_questions):
         print(f"Error generating performance report: {str(e)}")
         # Fallback to basic statistics
         print(f"\nBasic Performance Summary:")
-        print(f"Total Score: {correct_answers}/{total_questions}")
+        print(f"Total Score: {final_score}/{total_questions}")
         for domain, stats in performance_by_domain.items():
             print(f"{domain.upper()}: {stats['correct']}/{stats['total']} correct")
 
@@ -352,7 +352,7 @@ def create_sql_quiz():
         print(f"\nQuiz completed! Your score: {score}/{total_questions}")
 
         # After quiz completion, provide detailed feedback
-        provide_quiz_feedback(user_answers, question_pool)
+        provide_quiz_feedback(user_answers, question_pool, score, total_questions)
 
     except Exception as e:
         print(f"Fatal error in create_sql_quiz: {str(e)}")
