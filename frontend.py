@@ -158,12 +158,30 @@ def main():
         st.write(f"Final Score: {st.session_state.score}/5")
         
         with st.spinner("Generating performance report..."):
-            faisshnsw.provide_quiz_feedback(
+            feedback_data = faisshnsw.provide_quiz_feedback(
                 st.session_state.user_answers,
                 st.session_state.question_pool,
                 st.session_state.score,
                 5
             )
+            
+            if feedback_data:
+                st.write("### Performance Report")
+                st.write(feedback_data['feedback_text'])
+                
+                st.write("### Performance Breakdown")
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.write("**Domain Performance**")
+                    for domain, score in feedback_data['domain_performance'].items():
+                        st.write(f"{domain}: {score}")
+                
+                with col2:
+                    st.write("**Difficulty Level Performance**")
+                    if 'difficulty_performance' in feedback_data:
+                        for diff, score in feedback_data['difficulty_performance'].items():
+                            st.write(f"{diff.capitalize()}: {score}")
         
         if st.button("Start New Quiz"):
             reset_quiz()

@@ -92,6 +92,9 @@ def provide_quiz_feedback(user_answers, quiz_questions, final_score, total_quest
         quiz_questions: List of questions asked during the quiz
         final_score: The final score achieved by the candidate
         total_questions: Total number of questions attempted
+        
+    Returns:
+        dict: Contains feedback text and performance statistics
     """
     try:
         llm = ChatOpenAI(
@@ -171,17 +174,31 @@ def provide_quiz_feedback(user_answers, quiz_questions, final_score, total_quest
             }
         )
         
-        # Print the recruiter-focused feedback
-        print("\n=== Candidate Performance Report ===")
-        print(feedback['text'])
+        # Return a dictionary containing all relevant information
+        return {
+            'feedback_text': feedback['text'],
+            'domain_performance': {
+                domain: f"{stats['correct']}/{stats['total']} correct"
+                for domain, stats in performance_by_domain.items()
+            },
+            'difficulty_performance': {
+                diff: f"{sum(results)}/{len(results)} correct"
+                for diff, results in performance_by_difficulty.items()
+                if results
+            },
+            'overall_score': f"{final_score}/{total_questions}"
+        }
         
     except Exception as e:
-        print(f"Error generating performance report: {str(e)}")
-        # Fallback to basic statistics
-        print(f"\nBasic Performance Summary:")
-        print(f"Total Score: {final_score}/{total_questions}")
-        for domain, stats in performance_by_domain.items():
-            print(f"{domain.upper()}: {stats['correct']}/{stats['total']} correct")
+        # Return basic statistics in case of error
+        return {
+            'feedback_text': f"Error generating detailed feedback: {str(e)}",
+            'domain_performance': {
+                domain: f"{stats['correct']}/{stats['total']} correct"
+                for domain, stats in performance_by_domain.items()
+            },
+            'overall_score': f"{final_score}/{total_questions}"
+        }
 
 def create_sql_quiz():
     try:
@@ -358,7 +375,9 @@ def create_sql_quiz():
         print(f"\nQuiz completed! Your score: {score}/{total_questions}")
 
         # After quiz completion, provide detailed feedback
-        provide_quiz_feedback(user_answers, question_pool, score, total_questions)
+        feedback_info = provide_quiz_feedback(user_answers, question_pool, score, total_questions)
+        print("\n=== Candidate Performance Report ===")
+        print(feedback_info['feedback_text'])
 
     except Exception as e:
         print(f"Fatal error in create_sql_quiz: {str(e)}")
