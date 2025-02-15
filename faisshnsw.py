@@ -289,7 +289,11 @@ def create_sql_quiz():
                 )
                 
                 print(f"\nQuestion {i+1} (Difficulty: {current_difficulty}, Topic: {sub_topic}, Domain: {domain.upper()})")
-                print(llm_response)
+                # Extract just the question field from the LLM response dictionary
+                if isinstance(llm_response, dict) and 'question' in llm_response:
+                    print(llm_response['question'])
+                else:
+                    print(llm_response['text'])  # fallback to text if question not found
                 
                 user_answer = input("\nYour answer: ")
                 
@@ -308,7 +312,9 @@ def create_sql_quiz():
                     }
                 )
                 
-                if "correct" in str(result).lower():
+                # Extract just the text field and check if it contains "correct"
+                result_text = result['text'].lower()
+                if result_text == "correct":
                     print("Correct!")
                     score += 1
                     previous_performance = 'correct'
@@ -318,7 +324,7 @@ def create_sql_quiz():
                         current_difficulty = 'hard'
                 else:
                     print("Incorrect.")
-                    print(f"The correct answer is:\n{answer}")
+                    #print(f"The correct answer is:\n{answer}")
                     previous_performance = 'incorrect'
                     if current_difficulty == 'hard':
                         current_difficulty = 'medium'
