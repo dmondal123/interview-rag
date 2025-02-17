@@ -12,7 +12,7 @@ services:
     volumes:
       - /var/lib/docker/volumes/pgvector-data/_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     networks:
       - software_engineer_network
     healthcheck:
@@ -23,7 +23,7 @@ services:
     command: >
       postgres
       -c 'max_connections=50'
-      -c 'hba_file=/etc/postgresql/pg_hba.conf'
+      -c 'hba_file=/var/lib/postgresql/data/pg_hba.conf'
 
   travel_desk_agent_backend:
     container_name: faiss-container
