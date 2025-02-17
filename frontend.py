@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.chains import LLMChain
 import random
-import mysql.connector
+import psycopg2
 
 quiz_state = {
     "current_topic": None,
@@ -159,7 +159,7 @@ async def handle_answer(message: cl.Message):
             }
         )
         
-        is_correct = "correct" in result['text'].lower()
+        is_correct = result['text'].lower() == "correct"
         
         # Update quiz state
         if is_correct:
@@ -274,11 +274,9 @@ async def end_quiz():
         ).send()
 
 def get_db_connection():
-    # This function should return a database connection object
-    # For now, we'll use a placeholder
-    return mysql.connector.connect(
+    return psycopg2.connect(
         host="localhost",
+        database="programming_quiz",
         user="root",
-        password="password",
-        database="programming_quiz"
+        password="password"
     )

@@ -1,0 +1,52 @@
+services:
+  postgres:
+    container_name: pgvector-container-new
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: interview_embedding_store
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/lib/docker/volumes/pgvector-data/_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
+    networks:
+      - software_engineer_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d interview_embedding_store"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    command: >
+      postgres
+      -c 'max_connections=50'
+      -c 'hba_file=/etc/postgresql/pg_hba.conf'
+
+  travel_desk_agent_backend:
+    container_name: faiss-container
+    image: faiss-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - software_engineer_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - config/.env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: interview_embedding_store
+      DB_USER: postgres
+      DB_PASSWORD: password
+
+networks:
+  software_engineer_network:
+    driver: bridge
